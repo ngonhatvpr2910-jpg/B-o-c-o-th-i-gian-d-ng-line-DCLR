@@ -1,0 +1,6 @@
+{
+  "name": "Hệ thống Báo cáo Dừng Line Sản xuất",
+  "description": "Hệ thống báo cáo và thống kê trực quan thời gian dừng Line sản xuất, tích hợp biểu đồ phân tích và xuất Excel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
