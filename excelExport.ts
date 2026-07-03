@@ -1,6 +1,112 @@
 import * as XLSX from 'xlsx';
 import { DowntimeReport } from './types';
 import { calculateDowntimeCost } from './timeHelpers';
+import { Product } from './data';
+
+/**
+ * Xuất toàn bộ dữ liệu hệ thống (Báo cáo và Sản phẩm) ra file Excel để backup
+ */
+export function exportFullSystemDataToExcel(reports: DowntimeReport[], products: Product[]) {
+  const wb = XLSX.utils.book_new();
+
+  // 1. Sheet Báo cáo dừng Line (Dữ liệu thô để re-import)
+  const reportData = reports.map(r => ({
+    'ID': r.id,
+    'Ngày': r.date,
+    'Ca': r.shift,
+    'Chuyền': r.line,
+    'Thiết bị': r.equipment,
+    'Sản phẩm': r.productName,
+    'Đơn giá': r.productUnitPrice,
+    'Năng suất ĐM': r.standardRate,
+    'Bắt đầu': r.startTime,
+    'Kết thúc': r.endTime || '',
+    'Thời gian': r.duration,
+    'Nhóm nguyên nhân': r.reasonCategory,
+    'Chi tiết': r.details,
+    'Giải pháp': r.solution || '',
+    'Người báo cáo': r.pic,
+    'Trạng thái': r.status,
+    'Ngày tạo': r.createdAt
+  }));
+  const wsReports = XLSX.utils.json_to_sheet(reportData);
+  XLSX.utils.book_append_sheet(wb, wsReports, 'Báo cáo Dừng Line');
+
+  // 2. Sheet Danh mục Sản phẩm
+  const productData = products.map(p => ({
+    'Tên Sản Phẩm': p.name,
+    'Dây Chuyền': p.line,
+    'Đơn Giá (VNĐ)': p.unitPrice,
+    'Năng Suất Định Mức (SP/Giờ)': p.standardRate
+  }));
+  const wsProducts = XLSX.utils.json_to_sheet(productData);
+  XLSX.utils.book_append_sheet(wb, wsProducts, 'Danh mục Sản phẩm');
+
+  // 3. Xuất file
+  const fileName = `Sao_luu_he_thong_Sunhouse_${new Date().toISOString().slice(0, 10)}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+
+/**
+ * Phân tích file Excel backup để lấy lại toàn bộ dữ liệu
+ */
+export async function importFullSystemDataFromExcel(file: File): Promise<{ reports: DowntimeReport[], products: Product[] }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+        
+        let reports: DowntimeReport[] = [];
+        let products: Product[] = [];
+
+        // Đọc sheet Báo cáo
+        const wsReports = workbook.Sheets['Báo cáo Dừng Line'];
+        if (wsReports) {
+          const rawReports = XLSX.utils.sheet_to_json(wsReports) as any[];
+          reports = rawReports.map(r => ({
+            id: String(r['ID'] || Date.now() + Math.random()),
+            date: String(r['Ngày']),
+            shift: String(r['Ca']) as any,
+            line: String(r['Chuyền']) as any,
+            equipment: String(r['Thiết bị']),
+            productName: String(r['Sản phẩm']),
+            productUnitPrice: Number(r['Đơn giá']),
+            standardRate: Number(r['Năng suất ĐM']),
+            startTime: String(r['Bắt đầu']),
+            endTime: r['Kết thúc'] ? String(r['Kết thúc']) : undefined,
+            duration: Number(r['Thời gian']),
+            reasonCategory: String(r['Nhóm nguyên nhân']) as any,
+            details: String(r['Chi tiết']),
+            solution: r['Giải pháp'] ? String(r['Giải pháp']) : undefined,
+            pic: String(r['Người báo cáo']),
+            status: String(r['Trạng thái']) as any,
+            createdAt: r['Ngày tạo'] ? String(r['Ngày tạo']) : new Date().toISOString()
+          }));
+        }
+
+        // Đọc sheet Sản phẩm
+        const wsProducts = workbook.Sheets['Danh mục Sản phẩm'];
+        if (wsProducts) {
+          const rawProducts = XLSX.utils.sheet_to_json(wsProducts) as any[];
+          products = rawProducts.map(p => ({
+            name: String(p['Tên Sản Phẩm']),
+            line: String(p['Dây Chuyền']) as any,
+            unitPrice: Number(p['Đơn Giá (VNĐ)']),
+            standardRate: Number(p['Năng Suất Định Mức (SP/Giờ)'])
+          }));
+        }
+
+        resolve({ reports, products });
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = (error) => reject(error);
+    reader.readAsBinaryString(file);
+  });
+}
 
 /**
  * Xuất danh sách báo cáo dừng Line ra file Excel chuyên nghiệp

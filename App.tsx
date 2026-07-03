@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShieldAlert, 
@@ -9,7 +9,10 @@ import {
   FileSpreadsheet,
   Clock,
   HeartPulse,
-  Trash2
+  Trash2,
+  DownloadCloud,
+  UploadCloud,
+  RefreshCw
 } from 'lucide-react';
 import { DowntimeReport } from './types';
 import { INITIAL_DOWNTIME_REPORTS, PRODUCTS, Product } from './data';
@@ -18,11 +21,13 @@ import DowntimeCharts from './DowntimeCharts';
 import DowntimeForm from './DowntimeForm';
 import DowntimeTable from './DowntimeTable';
 import ProductConfig from './ProductConfig';
+import { exportFullSystemDataToExcel, importFullSystemDataFromExcel } from './excelExport';
 
 const LOCAL_STORAGE_KEY = 'sunhouse_downtime_reports';
 const LOCAL_STORAGE_PRODUCTS_KEY = 'sunhouse_products';
 
 export default function App() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   // 1. Quản lý danh sách báo cáo dừng Line (Tải từ localStorage nếu có)
   const [reports, setReports] = useState<DowntimeReport[]>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -117,14 +122,48 @@ export default function App() {
   const handleResetToDemo = () => {
     if (confirm('Bạn có chắc muốn khôi phục toàn bộ dữ liệu mẫu mặc định không? Tất cả các báo cáo do bạn tự thêm sẽ bị ghi đè.')) {
       setReports(INITIAL_DOWNTIME_REPORTS);
+      setProducts(PRODUCTS);
       setShowForm(false);
       setReportToEdit(null);
     }
   };
 
+  // 7. Backup và Restore hệ thống
+  const handleFullBackup = () => {
+    exportFullSystemDataToExcel(reports, products);
+  };
+
+  const handleFullRestore = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (confirm('Cảnh báo: Việc khôi phục dữ liệu sẽ ghi đè lên toàn bộ báo cáo và danh mục sản phẩm hiện tại. Bạn có chắc chắn muốn tiếp tục?')) {
+      try {
+        const data = await importFullSystemDataFromExcel(file);
+        setReports(data.reports);
+        setProducts(data.products);
+        alert(`Khôi phục thành công ${data.reports.length} báo cáo và ${data.products.length} mã sản phẩm!`);
+      } catch (error) {
+        console.error(error);
+        alert('Lỗi: File không đúng định dạng sao lưu hệ thống Sunhouse.');
+      }
+    }
+    // Reset file input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex flex-col antialiased">
       
+      {/* Hidden File Input for Restore */}
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFullRestore} 
+        accept=".xlsx, .xls" 
+        className="hidden" 
+      />
+
       {/* HEADER DOANH NGHIỆP - Tông đỏ Sunhouse thương hiệu */}
       <header className="bg-[#B71C1C] text-white shadow-md border-b-4 border-[#8E1010]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -148,11 +187,32 @@ export default function App() {
           </div>
 
           {/* Widget Thời gian thực & Tiện ích */}
-          <div className="flex items-center space-x-4 self-stretch md:self-auto justify-between md:justify-end">
+          <div className="flex flex-col sm:flex-row items-center gap-3 self-stretch md:self-auto">
+            
+            {/* Hệ thống Backup/Restore */}
+            <div className="flex items-center gap-2 bg-[#8E1010]/30 p-1.5 rounded-lg border border-white/10">
+              <button 
+                onClick={handleFullBackup}
+                title="Tải toàn bộ dữ liệu hệ thống (.xlsx)"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded text-[11px] font-bold transition-all"
+              >
+                <DownloadCloud className="w-3.5 h-3.5" />
+                Sao lưu
+              </button>
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                title="Khôi phục dữ liệu từ file backup"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded text-[11px] font-bold transition-all shadow-sm"
+              >
+                <UploadCloud className="w-3.5 h-3.5" />
+                Khôi phục
+              </button>
+            </div>
+
             <div className="flex items-center space-x-2 bg-[#8E1010]/50 px-3 py-2 rounded-lg text-xs font-mono border border-red-800">
               <Clock className="w-4 h-4 text-amber-300" />
               <div>
-                <span className="text-red-200">Giờ hiện tại:</span>{' '}
+                <span className="text-red-200">Giờ:</span>{' '}
                 <span className="font-bold text-white">
                   {currentTime.toLocaleTimeString('vi-VN')}
                 </span>
