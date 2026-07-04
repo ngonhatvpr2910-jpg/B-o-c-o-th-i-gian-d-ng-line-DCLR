@@ -118,6 +118,10 @@ export default function App() {
     setReports((prevReports) => prevReports.filter((r) => r.id !== id));
   };
 
+  const handleDeleteAllReports = (ids: string[]) => {
+    setReports((prevReports) => prevReports.filter((r) => !ids.includes(r.id)));
+  };
+
   // 6. Reset về dữ liệu mẫu mặc định
   const handleResetToDemo = () => {
     if (confirm('Bạn có chắc muốn khôi phục toàn bộ dữ liệu mẫu mặc định không? Tất cả các báo cáo do bạn tự thêm sẽ bị ghi đè.')) {
@@ -331,6 +335,7 @@ export default function App() {
                 reports={reports}
                 onEdit={handleEditClick}
                 onDelete={handleDeleteClick}
+                onDeleteAll={handleDeleteAllReports}
                 onAddNewClick={() => {
                   setReportToEdit(null);
                   setShowForm(true);

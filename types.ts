@@ -19,13 +19,10 @@ export interface DowntimeReport {
 }
 
 export type ReasonCategory =
-  | 'Sự cố máy móc/thiết bị'
-  | 'Thiếu nguyên vật liệu'
-  | 'Thay đổi mã hàng/Gá đặt'
-  | 'Chờ kiểm tra chất lượng'
-  | 'Sự cố vận hành/Nhân sự'
-  | 'Sự cố điện/nước/khí nén'
-  | 'Lý do khác';
+  | 'Con người'
+  | 'Máy móc/Thiết bị'
+  | 'Nguyên vật liệu'
+  | 'Phương pháp/Quy trình';
 
 export interface DowntimeFilters {
   startDate: string;

@@ -27,23 +27,17 @@ export const PRODUCTS: Product[] = [
 ];
 
 export const REASON_CATEGORIES: ReasonCategory[] = [
-  'Sự cố máy móc/thiết bị',
-  'Thiếu nguyên vật liệu',
-  'Thay đổi mã hàng/Gá đặt',
-  'Chờ kiểm tra chất lượng',
-  'Sự cố vận hành/Nhân sự',
-  'Sự cố điện/nước/khí nén',
-  'Lý do khác',
+  'Con người',
+  'Máy móc/Thiết bị',
+  'Nguyên vật liệu',
+  'Phương pháp/Quy trình',
 ];
 
 export const REASON_COLORS: Record<ReasonCategory, string> = {
-  'Sự cố máy móc/thiết bị': '#EF4444', // Red
-  'Thiếu nguyên vật liệu': '#F59E0B', // Amber
-  'Thay đổi mã hàng/Gá đặt': '#3B82F6', // Blue
-  'Chờ kiểm tra chất lượng': '#8B5CF6', // Purple
-  'Sự cố vận hành/Nhân sự': '#EC4899', // Pink
-  'Sự cố điện/nước/khí nén': '#10B981', // Green
-  'Lý do khác': '#6B7280', // Gray
+  'Con người': '#EC4899', // Pink
+  'Máy móc/Thiết bị': '#EF4444', // Red
+  'Nguyên vật liệu': '#F59E0B', // Amber
+  'Phương pháp/Quy trình': '#3B82F6', // Blue
 };
 
 export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
@@ -56,7 +50,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '08:15',
     endTime: '09:30',
     duration: 75,
-    reasonCategory: 'Sự cố máy móc/thiết bị',
+    reasonCategory: 'Máy móc/Thiết bị',
     details: 'Rò rỉ khớp nối áp lực cao tại cụm bơm màng chính.',
     solution: 'Thay thế gioăng cao su chịu áp lực, quấn băng tan gia cố và xiết chặt lực đai ốc.',
     pic: 'Nguyễn Minh Hoàng Khiêm',
@@ -75,7 +69,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '14:20',
     endTime: '14:50',
     duration: 30,
-    reasonCategory: 'Thay đổi mã hàng/Gá đặt',
+    reasonCategory: 'Phương pháp/Quy trình',
     details: 'Thay đổi gá đặt khuôn gá cụm hoa sen chia lửa cho mã bếp SHD-2026.',
     solution: 'Điều chỉnh lại khoảng cách đầu đánh lửa cơ và gá kẹp giữ thân bếp.',
     pic: 'Nguyễn Quốc Thịnh',
@@ -94,7 +88,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '10:00',
     endTime: '11:45',
     duration: 105,
-    reasonCategory: 'Thiếu nguyên vật liệu',
+    reasonCategory: 'Nguyên vật liệu',
     details: 'Chậm cung ứng vỏ tủ sơn tĩnh điện từ phân xưởng đột dập cơ khí chuyển sang.',
     solution: 'Huy động thủ công bằng xe đẩy nâng chuyển khẩn cấp vỏ tủ từ bãi đệm.',
     pic: 'Nguyễn Minh Hoàng Khiêm',
@@ -113,7 +107,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '22:15',
     endTime: '23:45',
     duration: 90,
-    reasonCategory: 'Sự cố điện/nước/khí nén',
+    reasonCategory: 'Máy móc/Thiết bị',
     details: 'Sụt áp áp suất khí nén cấp cho cảm biến đo áp thử rò rỉ van gas.',
     solution: 'Kiểm tra đường ống dẫn khí nén, phát hiện rò rỉ khớp nối nhanh và thay mới.',
     pic: 'Nguyễn Quốc Thịnh',
@@ -132,7 +126,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '15:30',
     endTime: '16:05',
     duration: 35,
-    reasonCategory: 'Chờ kiểm tra chất lượng',
+    reasonCategory: 'Phương pháp/Quy trình',
     details: 'Phát hiện rò rỉ khớp nối nhanh lõi số 3 trên loạt 5 máy liên tục. Chờ QA xác nhận nguyên nhân.',
     solution: 'QA lập biên bản, loại bỏ lô cút nối lỗi khuôn nhựa và thay thế linh kiện dự phòng đạt chuẩn.',
     pic: 'Nguyễn Minh Hoàng Khiêm',
@@ -151,7 +145,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '07:30',
     endTime: '09:50',
     duration: 140,
-    reasonCategory: 'Sự cố máy móc/thiết bị',
+    reasonCategory: 'Máy móc/Thiết bị',
     details: 'Hỏng van điện từ điều khiển xy-lanh ép trục xoay gây kẹt hành trình ép xuống.',
     solution: 'Thay thế cuộn coi điện từ và xy-lanh dẫn hướng khí nén mới.',
     pic: 'Nguyễn Minh Hoàng Khiêm',
@@ -170,7 +164,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '01:00',
     endTime: '01:45',
     duration: 45,
-    reasonCategory: 'Sự cố vận hành/Nhân sự',
+    reasonCategory: 'Con người',
     details: 'Công nhân mới thao tác tỳ lực quá mạnh gây mẻ đầu vít vặn màng vỏ cốc RO.',
     solution: 'Thay thế mũi vít, huấn luyện lại lực tỳ và bổ sung gá định vị vít treo.',
     pic: 'Nguyễn Minh Hoàng Khiêm',
@@ -189,7 +183,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '16:40',
     endTime: '17:10',
     duration: 30,
-    reasonCategory: 'Thiếu nguyên vật liệu',
+    reasonCategory: 'Nguyên vật liệu',
     details: 'Hết cụm chế hòa khí đánh lửa cơ Magneto tại khay chờ cấp liệu.',
     solution: 'Hối thúc kho trung chuyển giao bổ sung 5 thùng linh kiện Magneto dự phòng.',
     pic: 'Nguyễn Minh Hoàng Khiêm',
@@ -208,7 +202,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '08:45',
     endTime: '09:25',
     duration: 40,
-    reasonCategory: 'Sự cố máy móc/thiết bị',
+    reasonCategory: 'Máy móc/Thiết bị',
     details: 'Lệch mắt đọc hồng ngoại cảm biến nhận diện kính của máy dán nhãn tự động.',
     solution: 'Vệ sinh bụi bẩn bám trên thấu kính hồng ngoại, căn chỉnh lại góc nghiêng 15 độ.',
     pic: 'Nguyễn Quốc Thịnh',
@@ -227,7 +221,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '13:10',
     endTime: '13:50',
     duration: 40,
-    reasonCategory: 'Lý do khác',
+    reasonCategory: 'Con người',
     details: 'Dừng chạy chuyền chính để thực hiện kiểm tra an toàn điện định kỳ phân xưởng Lắp ráp RO.',
     solution: 'Ngắt điện an toàn, đo điện trở nối đất và đóng điện tái sản xuất.',
     pic: 'Nguyễn Minh Hoàng Khiêm',
@@ -246,7 +240,7 @@ export const INITIAL_DOWNTIME_REPORTS: DowntimeReport[] = [
     startTime: '15:15',
     endTime: '',
     duration: 0,
-    reasonCategory: 'Sự cố máy móc/thiết bị',
+    reasonCategory: 'Máy móc/Thiết bị',
     details: 'Kẹt dây đai nhựa PP tại cụm dao nhiệt hàn cắt dây đai của máy.',
     solution: 'Đang vệ sinh cặn nhựa bám dính ở lưỡi dao nhiệt và thay thế thanh cuộn đai mới.',
     pic: 'Nguyễn Quốc Thịnh',
